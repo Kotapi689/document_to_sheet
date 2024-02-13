@@ -1,7 +1,10 @@
+/*---------------------------
+| project: autoFill          |
+| version: 2.0.0             |
+-------------------------- */
+
 function autoFill() {
-  /*---------------------------
-  | 最初に1度だけ行う設定          |
-  -------------------------- */
+  // 最初に行う設定
   var rowFrom = 15;             //最初のセリフの行を指定 ""はつけない
   var lineFrom = "C";           //セリフの列を指定
   var actorLineFrom = "B";      //話者の列を指定
@@ -38,7 +41,9 @@ function autoFill() {
   targetRowFrom = String(rowFrom);
 
   // 一行ずつ書き込み
-  arrs.forEach(function(arr) {
+  var kwFilter;
+  var txtArr = "";
+  for(arr of arrs) {
     const insertRange = spreadsheetTab.getRange(lineFrom + rowFrom.toString()); //セリフ書き込みスタート地点を指定
     const actorRange = spreadsheetTab.getRange(actorLineFrom + rowFrom.toString()); //話者書き込みスタート地点を指定
     const tFlag1 = arr.match(kw1);
@@ -46,27 +51,74 @@ function autoFill() {
     const tFlag3 = arr.match(kw3);
 
     if(tFlag1 != null || tFlag2 != null || tFlag3 != null) {
-      flag = 2;
+      kwFilter = arr;
     }
+
     if(flag == 0 && arr != "") {
-      insertRange.setValue(arr);
-      actorRange.setValue("霊夢FX");
-    } else if(flag == 1 && arr != "") {
-      insertRange.setValue(arr);
-      actorRange.setValue("魔理沙FX");
-    } else if(flag == 2 && arr != "") {
-      Utilities.sleep(50);
-      insertRange.setValue(arr);
-      actorRange.setValue("霊夢&魔理沙FX");
-      if(tFlag1 != null || tFlag2 != null || tFlag3 != null) {
-        kwFilter = arr; //次の順目で正しいキーワードでアラートを出すためにフィルター設置
+      if(kwFilter != null) {
+        if(txtArr != "") {
+          txtArr = txtArr + "\n" + arr; //末尾に改行コード+次の文を追加
+        } else {
+          txtArr = arr;
+        }
+        flag = 2;
+        continue;
       }
-    } else if (arr == "") {
+      if(txtArr != "") {
+        txtArr = txtArr + "\n" + arr; //末尾に改行コード+次の文を追加
+      } else {
+        txtArr = arr;
+      }
+    } else if(flag == 1 && arr != "") {
+      if(kwFilter != null) {
+        if(txtArr != "") {
+          txtArr = txtArr + "\n" + arr; //末尾に改行コード+次の文を追加
+        } else {
+          txtArr = arr;
+        }
+        flag = 2;
+        continue;
+      }
+      if(txtArr != "") {
+        txtArr = txtArr + "\n" + arr; //末尾に改行コード+次の文を追加
+      } else {
+        txtArr = arr;
+      }
+    } else if(flag == 2 && arr != "") {
+      txtArr = txtArr + "\n" + arr; //末尾に改行コード+次の文を追加
+    } else if(flag == 3 && arr != "") {
+      flag = 0;
+      txtArr = arr;
+    } else if(flag == 4 && arr != "") {
+      flag = 1;
+      txtArr = arr;
+    } else if(flag == 5 && arr != "") {
+      flag = 2;
+      txtArr = arr;
+    } else if (arr == "") { //改行の場合は書き込んで次の行をターゲットに&フラグを3,4,5に振り分ける(3,4,5でまた改行がきたら2回連続改行と判断)
       if(flag == 0) {
+        flag = 3;
+        insertRange.setValue(txtArr);
+        actorRange.setValue("霊夢FX");
+        txtArr = "";
+        rowFrom++;
+      } else if(flag == 1) {
+        flag = 4;
+        insertRange.setValue(txtArr);
+        actorRange.setValue("魔理沙FX");
+        txtArr = "";
+        rowFrom++;
+      } else if(flag == 2) {
+        insertRange.setValue(txtArr);
+        actorRange.setValue("霊夢&魔理沙FX");
+        txtArr = "";
+        rowFrom++;
+        flag = 5;
+      } else if(flag == 3) { //霊夢から改行2回続くと魔理沙へバトンタッチ
         flag = 1;
-      } else if (flag == 1) {
+      } else if(flag == 4) { //魔理沙から改行2回続くと霊夢へバトンタッチ
         flag = 0;
-      } else if (flag == 2) {
+      } else if(flag == 5) { //二人から改行2行続くと次どちらになるか聞く
         if(kwFilter != null && kwFilter != kw3) {
           var response = ui.alert('「' + kwFilter + '」の次は霊夢ですか？', ui.ButtonSet.YES_NO);
           if (response === ui.Button.YES) {
@@ -74,27 +126,36 @@ function autoFill() {
           } else {
             flag = 1; //次が魔理沙ならフラグ1に
           }
+          kwFilter = null;
         }
       }
     }
-
-    rowFrom++;
-  })
+  }
+  insertRange.setValue(txtArr);
+  if(flag == 0 || flag == 3) {
+    actorRange.setValue("霊夢FX");
+  }
+  if(flag == 1 || flag == 4) {
+    actorRange.setValue("魔理沙FX");
+  }
+  if(flag == 2 || flag == 5) {
+    actorRange.setValue("霊夢&魔理沙FX");
+  }
 
   /* ここからは空白行を削除する処理 */
-  const targetRange = spreadsheetTab.getRange(lineFrom + targetRowFrom + ":" + lineFrom ); //セリフの頭から下までを削除の対象にする
-  const targetArray = targetRange.getValues(); //セルの値を取得
-  const targetArrayFlats = targetArray.flat(); // 二次元配列を一次元に
-  const targetArrayFlatsLength = targetArrayFlats.length; //要素数を取得
+  // const targetRange = spreadsheetTab.getRange(lineFrom + targetRowFrom + ":" + lineFrom ); //セリフの頭から下までを削除の対象にする
+  // const targetArray = targetRange.getValues(); //セルの値を取得
+  // const targetArrayFlats = targetArray.flat(); // 二次元配列を一次元に
+  // const targetArrayFlatsLength = targetArrayFlats.length; //要素数を取得
 
-  targetRow = 0;
-  targetArrayFlats.forEach(function(targetArrayFlat) {
-    if(targetArrayFlat == "") { //空行なら削除してtargetRowそのまま
-      spreadsheetTab.deleteRow(Number(targetRowFrom) + targetRow);
-    } else { //データが入っていれば次の行を調べるためtargetRowに1を足す
-      targetRow++;
-    }
-  })
+  // targetRow = 0;
+  // targetArrayFlats.forEach(function(targetArrayFlat) {
+  //   if(targetArrayFlat == "") { //空行なら削除してtargetRowそのまま
+  //     spreadsheetTab.deleteRow(Number(targetRowFrom) + targetRow);
+  //   } else { //データが入っていれば次の行を調べるためtargetRowに1を足す
+  //     targetRow++;
+  //   }
+  // })
 
   /* 仕上げに文字数カウントが抜けている箇所を埋める */
   const countRange = spreadsheetTab.getRange(countLineFrom + targetRowFrom + ":" + countLineFrom); //カウントの頭から下までが対象
