@@ -1,6 +1,6 @@
 /*---------------------------
 | project: autoFill          |
-| version: 2.0.0             |
+| version: 3.0.0             |
 -------------------------- */
 
 function autoFill() {
@@ -86,24 +86,15 @@ function autoFill() {
       }
     } else if(flag == 2 && arr != "") {
       txtArr = txtArr + "\n" + arr; //末尾に改行コード+次の文を追加
-    } else if(flag == 3 && arr != "") {
-      flag = 0;
-      txtArr = arr;
-    } else if(flag == 4 && arr != "") {
-      flag = 1;
-      txtArr = arr;
-    } else if(flag == 5 && arr != "") {
-      flag = 2;
-      txtArr = arr;
     } else if (arr == "") { //改行の場合は書き込んで次の行をターゲットに&フラグを3,4,5に振り分ける(3,4,5でまた改行がきたら2回連続改行と判断)
       if(flag == 0) {
-        flag = 3;
+        flag = 1;
         insertRange.setValue(txtArr);
         actorRange.setValue("霊夢FX");
         txtArr = "";
         rowFrom++;
       } else if(flag == 1) {
-        flag = 4;
+        flag = 0;
         insertRange.setValue(txtArr);
         actorRange.setValue("魔理沙FX");
         txtArr = "";
@@ -113,12 +104,6 @@ function autoFill() {
         actorRange.setValue("霊夢&魔理沙FX");
         txtArr = "";
         rowFrom++;
-        flag = 5;
-      } else if(flag == 3) { //霊夢から改行2回続くと魔理沙へバトンタッチ
-        flag = 1;
-      } else if(flag == 4) { //魔理沙から改行2回続くと霊夢へバトンタッチ
-        flag = 0;
-      } else if(flag == 5) { //二人から改行2行続くと次どちらになるか聞く
         if(kwFilter != null && kwFilter != kw3) {
           var response = ui.alert('「' + kwFilter + '」の次は霊夢ですか？', ui.ButtonSet.YES_NO);
           if (response === ui.Button.YES) {
@@ -132,30 +117,15 @@ function autoFill() {
     }
   }
   insertRange.setValue(txtArr);
-  if(flag == 0 || flag == 3) {
+  if(flag == 0) {
     actorRange.setValue("霊夢FX");
   }
-  if(flag == 1 || flag == 4) {
+  if(flag == 1) {
     actorRange.setValue("魔理沙FX");
   }
-  if(flag == 2 || flag == 5) {
+  if(flag == 2) {
     actorRange.setValue("霊夢&魔理沙FX");
   }
-
-  /* ここからは空白行を削除する処理 */
-  // const targetRange = spreadsheetTab.getRange(lineFrom + targetRowFrom + ":" + lineFrom ); //セリフの頭から下までを削除の対象にする
-  // const targetArray = targetRange.getValues(); //セルの値を取得
-  // const targetArrayFlats = targetArray.flat(); // 二次元配列を一次元に
-  // const targetArrayFlatsLength = targetArrayFlats.length; //要素数を取得
-
-  // targetRow = 0;
-  // targetArrayFlats.forEach(function(targetArrayFlat) {
-  //   if(targetArrayFlat == "") { //空行なら削除してtargetRowそのまま
-  //     spreadsheetTab.deleteRow(Number(targetRowFrom) + targetRow);
-  //   } else { //データが入っていれば次の行を調べるためtargetRowに1を足す
-  //     targetRow++;
-  //   }
-  // })
 
   /* 仕上げに文字数カウントが抜けている箇所を埋める */
   const countRange = spreadsheetTab.getRange(countLineFrom + targetRowFrom + ":" + countLineFrom); //カウントの頭から下までが対象
