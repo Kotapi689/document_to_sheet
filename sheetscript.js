@@ -1,10 +1,7 @@
-/*---------------------------
-| project: autoFill          |
-| version: 2.0.0             |
--------------------------- */
-
-function autoFill() {
-  // 最初に行う設定
+function autoFill_200() {
+  /*---------------------------
+  | 最初に1度だけ行う設定          |
+  -------------------------- */
   var rowFrom = 15;             //最初のセリフの行を指定 ""はつけない
   var lineFrom = "C";           //セリフの列を指定
   var actorLineFrom = "B";      //話者の列を指定
@@ -44,8 +41,8 @@ function autoFill() {
   var kwFilter;
   var txtArr = "";
   for(arr of arrs) {
-    const insertRange = spreadsheetTab.getRange(lineFrom + rowFrom.toString()); //セリフ書き込みスタート地点を指定
-    const actorRange = spreadsheetTab.getRange(actorLineFrom + rowFrom.toString()); //話者書き込みスタート地点を指定
+    var insertRange = spreadsheetTab.getRange(lineFrom + rowFrom.toString()); //セリフ書き込みスタート地点を指定
+    var actorRange = spreadsheetTab.getRange(actorLineFrom + rowFrom.toString()); //話者書き込みスタート地点を指定
     const tFlag1 = arr.match(kw1);
     const tFlag2 = arr.match(kw2);
     const tFlag3 = arr.match(kw3);
@@ -141,21 +138,6 @@ function autoFill() {
   if(flag == 2 || flag == 5) {
     actorRange.setValue("霊夢&魔理沙FX");
   }
-
-  /* ここからは空白行を削除する処理 */
-  // const targetRange = spreadsheetTab.getRange(lineFrom + targetRowFrom + ":" + lineFrom ); //セリフの頭から下までを削除の対象にする
-  // const targetArray = targetRange.getValues(); //セルの値を取得
-  // const targetArrayFlats = targetArray.flat(); // 二次元配列を一次元に
-  // const targetArrayFlatsLength = targetArrayFlats.length; //要素数を取得
-
-  // targetRow = 0;
-  // targetArrayFlats.forEach(function(targetArrayFlat) {
-  //   if(targetArrayFlat == "") { //空行なら削除してtargetRowそのまま
-  //     spreadsheetTab.deleteRow(Number(targetRowFrom) + targetRow);
-  //   } else { //データが入っていれば次の行を調べるためtargetRowに1を足す
-  //     targetRow++;
-  //   }
-  // })
 
   /* 仕上げに文字数カウントが抜けている箇所を埋める */
   const countRange = spreadsheetTab.getRange(countLineFrom + targetRowFrom + ":" + countLineFrom); //カウントの頭から下までが対象
