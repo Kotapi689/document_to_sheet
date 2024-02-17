@@ -44,8 +44,8 @@ function autoFill_300() {
   var kwFilter;
   var txtArr = "";
   for(arr of arrs) {
-    const insertRange = spreadsheetTab.getRange(lineFrom + rowFrom.toString()); //セリフ書き込みスタート地点を指定
-    const actorRange = spreadsheetTab.getRange(actorLineFrom + rowFrom.toString()); //話者書き込みスタート地点を指定
+    var insertRange = spreadsheetTab.getRange(lineFrom + rowFrom.toString()); //セリフ書き込みスタート地点を指定
+    var actorRange = spreadsheetTab.getRange(actorLineFrom + rowFrom.toString()); //話者書き込みスタート地点を指定
     const tFlag1 = arr.match(kw1);
     const tFlag2 = arr.match(kw2);
     const tFlag3 = arr.match(kw3);
