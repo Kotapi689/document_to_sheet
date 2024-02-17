@@ -3,7 +3,7 @@
 | version: 3.0.0             |
 -------------------------- */
 
-function autoFill() {
+function autoFill_300() {
   // 最初に行う設定
   var rowFrom = 15;             //最初のセリフの行を指定 ""はつけない
   var lineFrom = "C";           //セリフの列を指定
