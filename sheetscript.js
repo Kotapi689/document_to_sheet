@@ -1,4 +1,4 @@
-function autoFill_200() {
+function autoFill_2_00() {
   /*---------------------------
   | 最初に1度だけ行う設定          |
   -------------------------- */
@@ -96,18 +96,18 @@ function autoFill_200() {
       if(flag == 0) {
         flag = 3;
         insertRange.setValue(txtArr);
-        actorRange.setValue("霊夢FX");
+        actorRange.setValue("霊夢余田FX");
         txtArr = "";
         rowFrom++;
       } else if(flag == 1) {
         flag = 4;
         insertRange.setValue(txtArr);
-        actorRange.setValue("魔理沙FX");
+        actorRange.setValue("魔理沙余田FX");
         txtArr = "";
         rowFrom++;
       } else if(flag == 2) {
         insertRange.setValue(txtArr);
-        actorRange.setValue("霊夢&魔理沙FX");
+        actorRange.setValue("霊夢&魔理沙余田FX");
         txtArr = "";
         rowFrom++;
         flag = 5;
@@ -130,13 +130,13 @@ function autoFill_200() {
   }
   insertRange.setValue(txtArr);
   if(flag == 0 || flag == 3) {
-    actorRange.setValue("霊夢FX");
+    actorRange.setValue("霊夢余田FX");
   }
   if(flag == 1 || flag == 4) {
-    actorRange.setValue("魔理沙FX");
+    actorRange.setValue("魔理沙余田FX");
   }
   if(flag == 2 || flag == 5) {
-    actorRange.setValue("霊夢&魔理沙FX");
+    actorRange.setValue("霊夢&魔理沙余田FX");
   }
 
   /* 仕上げに文字数カウントが抜けている箇所を埋める */
